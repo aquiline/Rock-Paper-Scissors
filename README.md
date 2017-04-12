@@ -1,2 +1,2 @@
 # Rock-Paper-Scissors
-OpenGL based c++ game of rock paper scissors.
+OpenGL based C++ game of Rock-Paper-Scissors.
