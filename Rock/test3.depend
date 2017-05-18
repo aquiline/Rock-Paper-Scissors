@@ -1,20 +1,26 @@
 # depslib dependency file v1.0
-1494278113 source:c:\users\dell\documents\practice\opengl-projects\rps\text.cpp
-	"Text.h"
+1495096151 source:c:\users\dell\documents\practice\opengl-projects\test3\main.cpp
+	<stdlib.h>
+	<stdio.h>
+	<iostream>
+	<Windows.h>
 	<GL/glut.h>
 
-1494278137 c:\users\dell\documents\practice\opengl-projects\rps\text.h
+1341006776 c:\codeblocks\mingw\include\stdlib.h
+	<_mingw.h>
+	<stddef.h>
 
-1368260360 c:\codeblocks\mingw\include\gl\glut.h
-	"freeglut_std.h"
+1341006770 c:\codeblocks\mingw\include\_mingw.h
 
-1491844605 c:\codeblocks\mingw\include\gl\freeglut_std.h
-	<windows.h>
-	<OpenGL/gl.h>
-	<OpenGL/glu.h>
-	<GL/gl.h>
-	<GL/glu.h>
-	<stdlib.h>
+1341006776 c:\codeblocks\mingw\include\stdio.h
+	<_mingw.h>
+	<stddef.h>
+	<stdarg.h>
+	<sys/types.h>
+
+1341006780 c:\codeblocks\mingw\include\sys\types.h
+	<_mingw.h>
+	<stddef.h>
 
 1301111162 c:\codeblocks\mingw\include\windows.h
 	<winresrc.h>
@@ -68,8 +74,6 @@
 1341006776 c:\codeblocks\mingw\include\string.h
 	<_mingw.h>
 	<stddef.h>
-
-1341006770 c:\codeblocks\mingw\include\_mingw.h
 
 1301111148 c:\codeblocks\mingw\include\basetsd.h
 
@@ -199,10 +203,6 @@
 	<objidl.h>
 	<cguid.h>
 
-1341006776 c:\codeblocks\mingw\include\stdlib.h
-	<_mingw.h>
-	<stddef.h>
-
 1301111156 c:\codeblocks\mingw\include\objidl.h
 	<objfwd.h>
 
@@ -220,22 +220,35 @@
 1301111156 c:\codeblocks\mingw\include\oleidl.h
 	<objfwd.h>
 
+1368260360 c:\codeblocks\mingw\include\gl\glut.h
+	"freeglut_std.h"
+
+1491844605 c:\codeblocks\mingw\include\gl\freeglut_std.h
+	<windows.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<stdlib.h>
+
 1301111164 c:\codeblocks\mingw\include\gl\gl.h
 
 1301111164 c:\codeblocks\mingw\include\gl\glu.h
 	<stddef.h>
 	<GL/gl.h>
 
-1494280989 source:c:\users\dell\documents\practice\opengl-projects\rps\button.cpp
-	"Button.h"
+1495090334 source:c:\users\dell\documents\practice\opengl-projects\test3\input.cpp
 
-1494284240 c:\users\dell\documents\practice\opengl-projects\rps\button.h
-	<iostream>
+1495088326 c:\users\dell\documents\practice\opengl-projects\test3\input.h
 
-1494279826 source:c:\users\dell\documents\practice\opengl-projects\rps\main.cpp
-	<iostream>
-	<GL/glut.h>
+1341006776 c:\codeblocks\mingw\include\time.h
+	<_mingw.h>
+	<stddef.h>
+
+1495097080 source:c:\cg_proj\rock\main.cpp
 	<stdlib.h>
-	"Text.h"
-	"Button.h"
+	<stdio.h>
+	<iostream>
+	<Windows.h>
+	<GL/glut.h>
 
