@@ -3,36 +3,38 @@
 #include <iostream>
 
 #ifdef WIN32
-	#define WIN32_LEAN_AND_MEAN
-	#include <Windows.h>
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 #endif
 
 #include <GL/glut.h>
 
 using namespace std;
 
+int select = 1; // Scene selection Variable. This is our GOD (^_^)
+
+/******* Mouse data structure ******/
 struct Mouse
 {
 	int x;		/*	the x coordinate of the mouse cursor	*/
 	int y;		/*	the y coordinate of the mouse cursor	*/
 	int lmb;	/*	is the left button pressed?		*/
-	int mmb;	/*	is the middle button pressed?	*/
-	int rmb;	/*	is the right button pressed?	*/
 
-	int xpress; /*	stores the x-coord of when the first button press occurred	*/
-	int ypress; /*	stores the y-coord of when the first button press occurred	*/
+	int xpress; /*	stores the x-coordinate of when the first button press occurred	*/
+	int ypress; /*	stores the y-coordinate of when the first button press occurred	*/
 };
 
-typedef struct Mouse Mouse;
+typedef struct Mouse Mouse; //Typecasting it for "PURPOSES".
 
-Mouse TheMouse = {0,0,0,0,0};
+Mouse TheMouse = { 0,0,0,0,0 }; // Creating and Initializing a mouse variable again for "PURPOSES".
 
 int winw = 1200;
 int winh = 650;
 
 
-typedef void (*ButtonCallback)();
+typedef void(*ButtonCallback)(); //Typecasting our button click function .
 
+/******* Button data structure ******/
 struct Button
 {
 	int   x;							/* top left x coord of the button */
@@ -44,140 +46,324 @@ struct Button
 	const unsigned char* label;						/* the text label of the button */
 	ButtonCallback callbackFunction;	/* A pointer to a function to call if the button is pressed */
 };
-typedef struct Button Button;
+typedef struct Button Button; // Deal with this.
 
-void Font(void *font,const unsigned char *text,int x,int y)
+
+/****** ThE fUnCtIoN wItHoUt WhIcH tExT wOnT't WoRk******/
+void Font(void *font, const unsigned char *text, int x, int y)
 {
 	glRasterPos2i(x, y);
 
-	while( *text != '\0' )
+	while (*text != '\0')
 	{
-		glutBitmapCharacter( font, *text );
+		glutBitmapCharacter(font, *text);
 		++text;
 	}
 }
-int userChoice=0;
-int cpuChoice=0;
+
+/******* Following Four functions decide what to do on button clicks , for all the buttons in the game ******/
+void TheButtonCallback()
+{
+	select = 2;
+}
+
+void TheButtonCallback1()
+{
+	select = 3;
+}
+
+void TheButtonCallback2()
+{
+	exit(0);
+}
+
+void TheButtonCallback3()
+{
+	select = 1;
+}
+
+/****** Declaring all the buttons in our game ******/
+Button StartButton = {(winw / 2) - 50,(winh / 2) - 12, 100,25, 0,0, reinterpret_cast<const unsigned char *>("START GAME"), TheButtonCallback };
+Button InsButton = {(winw / 2) -50,(winh / 2) + 24, 100,25, 0,0, reinterpret_cast<const unsigned char *>("INSTRUCTION"), TheButtonCallback1 };
+Button ExitButton = {(winw / 2) - 50,(winh / 2) + 60, 100,25, 0,0, reinterpret_cast<const unsigned char *>("EXIT"), TheButtonCallback2 };
+Button BackButton = { winw  - 650,winh  - 80, 100,25, 0,0, reinterpret_cast<const unsigned char *>("<-BACK"), TheButtonCallback3 };
+
+/****** The following functions define all scenes in the game and its respective computations ******/
+
+void ButtonDraw(Button *b) // Defined here because will be used in every scene.
+{
+	int fontx;
+	int fonty;
+
+	if (b)
+	{
+		if (b->highlighted)
+			glColor3f(1.0f, 0.0f, 0.0f);
+		else
+			glColor3f(0.6f, 0.6f, 0.6f);
+
+		glBegin(GL_QUADS);
+		glVertex2i(b->x, b->y);
+		glVertex2i(b->x, b->y + b->h);
+		glVertex2i(b->x + b->w, b->y + b->h);
+		glVertex2i(b->x + b->w, b->y);
+		glEnd();
+
+		glLineWidth(3);
+
+		if (b->state)
+			glColor3f(0.4f, 0.4f, 0.4f);
+		else
+			glColor3f(0.8f, 0.8f, 0.8f);
+
+		glBegin(GL_LINE_STRIP);
+		glVertex2i(b->x + b->w, b->y);
+		glVertex2i(b->x, b->y);
+		glVertex2i(b->x, b->y + b->h);
+		glEnd();
+
+		if (b->state)
+			glColor3f(0.8f, 0.8f, 0.8f);
+		else
+			glColor3f(0.4f, 0.4f, 0.4f);
+
+		glBegin(GL_LINE_STRIP);
+		glVertex2i(b->x, b->y + b->h);
+		glVertex2i(b->x + b->w, b->y + b->h);
+		glVertex2i(b->x + b->w, b->y);
+		glEnd();
+
+		glLineWidth(1);
+
+
+
+		fontx = b->x + (b->w - glutBitmapLength(GLUT_BITMAP_HELVETICA_10, b->label)) / 2;
+		fonty = b->y + (b->h + 10) / 2;
+
+
+		if (b->state) {
+			fontx += 2;
+			fonty += 2;
+		}
+
+
+		if (b->highlighted)
+		{
+			glColor3f(0, 0, 0);
+			Font(GLUT_BITMAP_HELVETICA_10, b->label, fontx, fonty);
+			fontx--;
+			fonty--;
+		}
+
+		glColor3f(1, 1, 1);
+		Font(GLUT_BITMAP_HELVETICA_10, b->label, fontx, fonty);
+	}
+}
+
+void scene1()
+{
+	glClearColor(0.0,0.0,0.0,1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0, winw, winh, 0);
+
+	ButtonDraw(&StartButton);
+	ButtonDraw(&InsButton);
+	ButtonDraw(&ExitButton);
+
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("ROCK-----PAPER-----SCISSOR"), 450, 100);
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("PROJECT BY "), 900, 580);
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("RANJITH D"), 950, 600);
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("PRAVEEN KUMAR G"), 950, 620);
+
+	glutSwapBuffers();
+	glFlush();
+}
+
+
+int userChoice = 0;
+int cpuChoice = 0;
 
 void kb(unsigned char key, int x, int y)
 {
-   switch (key) {
-      case 'z':  userChoice=1;glutPostRedisplay();break;
-      case 'x':  userChoice=2;glutPostRedisplay();break;
-      case 'c':  userChoice=3;glutPostRedisplay();break;
-   }
+	switch (key) {
+	case 'z':  userChoice = 1; glutPostRedisplay(); break;
+	case 'x':  userChoice = 2; glutPostRedisplay(); break;
+	case 'c':  userChoice = 3; glutPostRedisplay(); break;
+	}
 }
+
 void cpuDisplay()
 {
-    if(cpuChoice == 1)
-    {
-        Font(GLUT_BITMAP_TIMES_ROMAN_24,reinterpret_cast<const unsigned char *>("Rock"),900,300);
-        cout<<cpuChoice;
-    }
-    else if(cpuChoice == 2)
-    {
-        Font(GLUT_BITMAP_TIMES_ROMAN_24,reinterpret_cast<const unsigned char *>("Paper"),900,300);
-        cout<<cpuChoice;
-    }
-    else if(cpuChoice == 3)
-    {
-        Font(GLUT_BITMAP_TIMES_ROMAN_24,reinterpret_cast<const unsigned char *>("Scissor"),900,300);
-        cout<<cpuChoice;
-    }
+	if (cpuChoice == 1)
+	{
+		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Rock"), 900, 300);
+		cout << cpuChoice;
+	}
+	else if (cpuChoice == 2)
+	{
+		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Paper"), 900, 300);
+		cout << cpuChoice;
+	}
+	else if (cpuChoice == 3)
+	{
+		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Scissor"), 900, 300);
+		cout << cpuChoice;
+	}
 }
 void computeWinner()
 {
-    if((cpuChoice == 1 && userChoice == 1) || (cpuChoice == 2 && userChoice == 2) || (cpuChoice == 3 && userChoice == 3))
-    {
-        Font(GLUT_BITMAP_TIMES_ROMAN_24,reinterpret_cast<const unsigned char *>("TIED"),600,600);
-        cout<<cpuChoice;
-    }
-    else if((cpuChoice == 3 && userChoice == 1) || (cpuChoice == 1 && userChoice == 2) || (cpuChoice == 2 && userChoice == 3))
-    {
-        Font(GLUT_BITMAP_TIMES_ROMAN_24,reinterpret_cast<const unsigned char *>("Player Wins"),600,600);
-        cout<<cpuChoice;
-    }
-    else if((cpuChoice == 1 && userChoice == 3) || (cpuChoice == 2 && userChoice == 1) || (cpuChoice == 3 && userChoice == 2))
-    {
-        Font(GLUT_BITMAP_TIMES_ROMAN_24,reinterpret_cast<const unsigned char *>("Cpu Wins"),600,600);
-        cout<<cpuChoice;
-    }
+	if ((cpuChoice == 1 && userChoice == 1) || (cpuChoice == 2 && userChoice == 2) || (cpuChoice == 3 && userChoice == 3))
+	{
+		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("TIED"), 570, 500);
+		cout << cpuChoice;
+	}
+	else if ((cpuChoice == 3 && userChoice == 1) || (cpuChoice == 1 && userChoice == 2) || (cpuChoice == 2 && userChoice == 3))
+	{
+		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Player Wins"), 550, 500);
+		cout << cpuChoice;
+	}
+	else if ((cpuChoice == 1 && userChoice == 3) || (cpuChoice == 2 && userChoice == 1) || (cpuChoice == 3 && userChoice == 2))
+	{
+		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("CPU Wins"), 560, 500);
+		cout << cpuChoice;
+	}
 }
 void gameplay()
 {
-    Font(GLUT_BITMAP_TIMES_ROMAN_24,reinterpret_cast<const unsigned char *>( "Enter Your Choice" ),100,100);
-    Font(GLUT_BITMAP_TIMES_ROMAN_24,reinterpret_cast<const unsigned char *>( "Player" ),200,200);
-    Font(GLUT_BITMAP_TIMES_ROMAN_24,reinterpret_cast<const unsigned char *>( "CPU" ),800,200);
+	Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Enter Your Choice"), 520, 100);
+	Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Player"), 200, 200);
+	Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("CPU"), 900, 200);
 
 
-    if(userChoice == 1)
-    {
-        cpuChoice = rand()%3+1;
-        Font(GLUT_BITMAP_TIMES_ROMAN_24,reinterpret_cast<const unsigned char *>("Rock"),300,300);
-        cpuDisplay();
-        computeWinner();
-    }
-    else if(userChoice == 2)
-    {
-        cpuChoice = rand()%3+1;
-        Font(GLUT_BITMAP_TIMES_ROMAN_24,reinterpret_cast<const unsigned char *>("Paper"),300,300);
-        cpuDisplay();
-        computeWinner();
-    }
-    else if(userChoice == 3)
-    {
-        cpuChoice = rand()%3+1;
-        Font(GLUT_BITMAP_TIMES_ROMAN_24,reinterpret_cast<const unsigned char *>("Scissor"),300,300);
-        cpuDisplay();
-        computeWinner();
-    }
+	if (userChoice == 1)
+	{
+		cpuChoice = rand() % 3 + 1;
+		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Rock"), 200, 300);
+		cpuDisplay();
+		computeWinner();
+	}
+	else if (userChoice == 2)
+	{
+		cpuChoice = rand() % 3 + 1;
+		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Paper"), 200, 300);
+		cpuDisplay();
+		computeWinner();
+	}
+	else if (userChoice == 3)
+	{
+		cpuChoice = rand() % 3 + 1;
+		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Scissor"), 200, 300);
+		cpuDisplay();
+		computeWinner();
+	}
 }
+
 void scene2()
 {
-    glClearColor(0.0,0.0,0.0,1.0);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(0,winw,winh,0);
-    gameplay();
-    glutSwapBuffers();
-    glFlush();
+	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0, winw, winh, 0);
+	ButtonDraw(&BackButton);
+	gameplay();
+	glutSwapBuffers();
+	glFlush();
 }
 
-void TheButtonCallback()
+void instructions()
 {
-	glutDisplayFunc(scene2);
+	Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("WELCOME"), 520, 100);
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("THERE ARE THREE ENTITIES IN THIS GAME"), 100, 300);
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("i.e 'ROCK', 'PAPER' AND 'SCISSOR' "), 100, 320);
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("THE RULES ARE"), 100, 340);
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("ROCK BEATS SCISSOR"), 200, 360);
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("PAPER BEATS ROCK"), 200, 380);
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("SCISSOR BEATS PAPER"), 200, 400);
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("THE PLAYER HAS TO CHOOSE BETWEEN ROCK,PAPER AND SCISSOR"), 100, 420);
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("PRESS Z FOR ROCK"), 200, 440);
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("PRESS X FOR PAPER"), 200, 460);
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("PRESS C FOR SCISSOR"), 200, 480);
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("DEPENDING ON WHAT CPU CHOOSES THE RESULT WILL BE REVEALED"), 100, 500);
+
+}
+void scene3()
+{
+	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0, winw, winh, 0);
+	instructions();
+	ButtonDraw(&BackButton);
+	glutSwapBuffers();
+	glFlush();
 }
 
-
-Button MyButton = {(winw/2)-50,(winh/2)-12, 100,25, 0,0, reinterpret_cast<const unsigned char *>( "Start Game" ), TheButtonCallback };
-
-
-
-
-
-int ButtonClickTest(Button* b,int x,int y)
+/****** Main Display Function ******/
+void display()
 {
-	if( b)
+	if(select == 1)
+	{
+		scene1();
+	}
+	if(select == 2)
+	{
+		scene2();
+	}
+	if(select == 3)
+	{
+		scene3();
+	}
+}
+
+/*******Mouse and Button Animations******/
+
+int ButtonClickTest(Button* b, int x, int y)
+{
+	if (b)
 	{
 
-	    if( x > b->x      &&
-			x < b->x+b->w &&
+		if (x > b->x      &&
+			x < b->x + b->w &&
 			y > b->y      &&
-			y < b->y+b->h ) {
-				return 1;
+			y < b->y + b->h) {
+			return 1;
 		}
 	}
 	return 0;
 }
-
-void ButtonRelease(Button *b,int x,int y)
+void ButtonPassive(Button *b, int x, int y)
 {
-	if(b)
+	if (b)
+	{
+		if (ButtonClickTest(b, x, y))
+		{
+			if (b->highlighted == 0) {
+				b->highlighted = 1;
+				glutPostRedisplay();
+			}
+		}
+		else
+
+
+			if (b->highlighted == 1)
+			{
+				b->highlighted = 0;
+				glutPostRedisplay();
+			}
+	}
+}
+
+void ButtonRelease(Button *b, int x, int y)
+{
+	if (b)
 	{
 
-		if( ButtonClickTest(b,TheMouse.xpress,TheMouse.ypress) &&
-			ButtonClickTest(b,x,y) )
+		if (ButtonClickTest(b, TheMouse.xpress, TheMouse.ypress) &&
+			ButtonClickTest(b, x, y))
 		{
 
 			if (b->callbackFunction) {
@@ -189,146 +375,25 @@ void ButtonRelease(Button *b,int x,int y)
 	}
 }
 
-void ButtonPress(Button *b,int x,int y)
+void ButtonPress(Button *b, int x, int y)
 {
-	if(b)
+	if (b)
 	{
-		if( ButtonClickTest(b,x,y) )
+		if (ButtonClickTest(b, x, y))
 		{
 			b->state = 1;
 		}
 	}
 }
 
-void ButtonPassive(Button *b,int x,int y)
-{
-	if(b)
-	{
-		if( ButtonClickTest(b,x,y) )
-		{
-			if( b->highlighted == 0 ) {
-				b->highlighted = 1;
-				glutPostRedisplay();
-			}
-		}
-		else
-
-
-		if( b->highlighted == 1 )
-		{
-			b->highlighted = 0;
-			glutPostRedisplay();
-		}
-	}
-}
-
-void ButtonDraw(Button *b)
-{
-	int fontx;
-	int fonty;
-
-	if(b)
-	{
-		if (b->highlighted)
-			glColor3f(1.0f,0.0f,0.0f);
-		else
-			glColor3f(0.6f,0.6f,0.6f);
-
-		glBegin(GL_QUADS);
-			glVertex2i( b->x     , b->y      );
-			glVertex2i( b->x     , b->y+b->h );
-			glVertex2i( b->x+b->w, b->y+b->h );
-			glVertex2i( b->x+b->w, b->y      );
-		glEnd();
-
-		glLineWidth(3);
-
-		if (b->state)
-			glColor3f(0.4f,0.4f,0.4f);
-		else
-			glColor3f(0.8f,0.8f,0.8f);
-
-		glBegin(GL_LINE_STRIP);
-			glVertex2i( b->x+b->w, b->y      );
-			glVertex2i( b->x     , b->y      );
-			glVertex2i( b->x     , b->y+b->h );
-		glEnd();
-
-		if (b->state)
-			glColor3f(0.8f,0.8f,0.8f);
-		else
-			glColor3f(0.4f,0.4f,0.4f);
-
-		glBegin(GL_LINE_STRIP);
-			glVertex2i( b->x     , b->y+b->h );
-			glVertex2i( b->x+b->w, b->y+b->h );
-			glVertex2i( b->x+b->w, b->y      );
-		glEnd();
-
-		glLineWidth(1);
-
-
-
-		fontx = b->x + (b->w - glutBitmapLength(GLUT_BITMAP_HELVETICA_10,b->label)) / 2 ;
-		fonty = b->y + (b->h+10)/2;
-
-
-		if (b->state) {
-			fontx+=2;
-			fonty+=2;
-		}
-
-
-		if(b->highlighted)
-		{
-			glColor3f(0,0,0);
-			Font(GLUT_BITMAP_HELVETICA_10,b->label,fontx,fonty);
-			fontx--;
-			fonty--;
-		}
-
-		glColor3f(1,1,1);
-		Font(GLUT_BITMAP_HELVETICA_10,b->label,fontx,fonty);
-	}
-}
-
-void Init()
-{
-	glEnable(GL_LIGHT0);
-}
-
-void Draw2D()
-{
-	ButtonDraw(&MyButton);
-}
-
-void Draw()
-{
-
-	glClear( GL_COLOR_BUFFER_BIT |
-			 GL_DEPTH_BUFFER_BIT );
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0,winw,winh,0,-1,1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	Draw2D();
-
-	glutSwapBuffers();
-}
-
-
 void Resize(int w, int h)
 {
 	winw = w;
 	winh = h;
-
-	glViewport(0,0,w,h);
+	glViewport(0, 0, w, h);
 }
 
-void MouseButton(int button,int state,int x, int y)
+void MouseButton(int button, int state, int x, int y)
 {
 	TheMouse.x = x;
 	TheMouse.y = y;
@@ -336,38 +401,32 @@ void MouseButton(int button,int state,int x, int y)
 	if (state == GLUT_DOWN)
 	{
 
-		if ( !(TheMouse.lmb || TheMouse.mmb || TheMouse.rmb) ) {
+		if (!(TheMouse.lmb)) {
 			TheMouse.xpress = x;
 			TheMouse.ypress = y;
 		}
 
-		switch(button)
+		switch (button)
 		{
 		case GLUT_LEFT_BUTTON:
 			TheMouse.lmb = 1;
-			ButtonPress(&MyButton,x,y);
-		case GLUT_MIDDLE_BUTTON:
-			TheMouse.mmb = 1;
-			break;
-		case GLUT_RIGHT_BUTTON:
-			TheMouse.rmb = 1;
-			break;
+			ButtonPress(&StartButton, x, y);
+			ButtonPress(&InsButton, x, y);
+			ButtonPress(&ExitButton, x, y);
+			ButtonPress(&BackButton, x, y);
 		}
 	}
 	else
 	{
 
-		switch(button)
+		switch (button)
 		{
 		case GLUT_LEFT_BUTTON:
 			TheMouse.lmb = 0;
-			ButtonRelease(&MyButton,x,y);
-			break;
-		case GLUT_MIDDLE_BUTTON:
-			TheMouse.mmb = 0;
-			break;
-		case GLUT_RIGHT_BUTTON:
-			TheMouse.rmb = 0;
+			ButtonRelease(&StartButton, x, y);
+			ButtonRelease(&InsButton, x, y);
+			ButtonRelease(&ExitButton, x, y);
+			ButtonRelease(&BackButton, x, y);
 			break;
 		}
 	}
@@ -379,7 +438,10 @@ void MouseMotion(int x, int y)
 {
 	TheMouse.x = x;
 	TheMouse.y = y;
-	ButtonPassive(&MyButton,x,y);
+	ButtonPassive(&StartButton, x, y);
+	ButtonPassive(&InsButton, x, y);
+	ButtonPassive(&ExitButton, x, y);
+	ButtonPassive(&BackButton, x, y);
 	glutPostRedisplay();
 }
 
@@ -388,35 +450,28 @@ void MousePassiveMotion(int x, int y)
 {
 	TheMouse.x = x;
 	TheMouse.y = y;
-	ButtonPassive(&MyButton,x,y);
+	ButtonPassive(&StartButton, x, y);
+	ButtonPassive(&InsButton, x, y);
+	ButtonPassive(&ExitButton, x, y);
+	ButtonPassive(&BackButton, x, y);
 }
 
-int main(int argc,char **argv)
+int main(int argc, char **argv)
 {
-	glutInit(&argc,argv);
-	glutInitDisplayMode(GLUT_RGB|GLUT_DEPTH|GLUT_DOUBLE);
-	glutInitWindowSize(winw,winh);
-	glutInitWindowPosition(0,0);
-	glutCreateWindow("RPS");
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
+	glutInitWindowSize(winw, winh);
+	glutInitWindowPosition(0, 0);
+	glutCreateWindow("ROCK-PAPER-SCISSOR");
+	glutReshapeFunc(Resize);
 
 	glutKeyboardFunc(kb);
-	glutDisplayFunc(Draw);
-	glutReshapeFunc(Resize);
+
+	glutDisplayFunc(display);
+
 	glutMouseFunc(MouseButton);
 	glutMotionFunc(MouseMotion);
 	glutPassiveMotionFunc(MousePassiveMotion);
-	Init();
+
 	glutMainLoop();
 }
-
-
-
-
-
-
-
-
-
-
-
-
