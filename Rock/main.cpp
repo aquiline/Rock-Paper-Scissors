@@ -160,7 +160,7 @@ void ButtonDraw(Button *b) // Defined here because will be used in every scene.
 	}
 }
 
-void scene1()
+void MenuScene()
 {
 	glClearColor(0.0,0.0,0.0,1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -184,13 +184,14 @@ void scene1()
 
 int userChoice = 0;
 int cpuChoice = 0;
+int same = 0; // This variable keeps the screen from Unwanted Redisplays
 
 void kb(unsigned char key, int x, int y)
 {
 	switch (key) {
-	case 'z':  userChoice = 1; glutPostRedisplay(); break;
-	case 'x':  userChoice = 2; glutPostRedisplay(); break;
-	case 'c':  userChoice = 3; glutPostRedisplay(); break;
+	case 'z':  userChoice = 1;same = 0; glutPostRedisplay(); break;
+	case 'x':  userChoice = 2;same = 0; glutPostRedisplay(); break;
+	case 'c':  userChoice = 3;same = 0; glutPostRedisplay(); break;
 	}
 }
 
@@ -236,31 +237,35 @@ void gameplay()
 	Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Player"), 200, 200);
 	Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("CPU"), 900, 200);
 
+    if(!same)cpuChoice = rand() % 3 + 1; // New values only for Fresh Input.
 
-	if (userChoice == 1)
-	{
-		cpuChoice = rand() % 3 + 1;
-		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Rock"), 200, 300);
-		cpuDisplay();
-		computeWinner();
-	}
-	else if (userChoice == 2)
-	{
-		cpuChoice = rand() % 3 + 1;
-		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Paper"), 200, 300);
-		cpuDisplay();
-		computeWinner();
-	}
-	else if (userChoice == 3)
-	{
-		cpuChoice = rand() % 3 + 1;
-		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Scissor"), 200, 300);
-		cpuDisplay();
-		computeWinner();
-	}
+    same = 1; // Display for one User Input case.
+    if (userChoice == 1)
+    {
+        //cpuChoice = rand() % 3 + 1;
+        Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Rock"), 200, 300);
+        cpuDisplay();
+        computeWinner();
+    }
+    else if (userChoice == 2)
+    {
+        //cpuChoice = rand() % 3 + 1;
+        Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Paper"), 200, 300);
+        cpuDisplay();
+        computeWinner();
+    }
+    else if (userChoice == 3)
+    {
+        //cpuChoice = rand() % 3 + 1;
+        Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Scissor"), 200, 300);
+        cpuDisplay();
+        computeWinner();
+    }
+
+
 }
 
-void scene2()
+void GameScene()
 {
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -289,7 +294,7 @@ void instructions()
 	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("DEPENDING ON WHAT CPU CHOOSES THE RESULT WILL BE REVEALED"), 100, 500);
 
 }
-void scene3()
+void InstructionScene()
 {
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -301,22 +306,39 @@ void scene3()
 	glutSwapBuffers();
 	glFlush();
 }
-
+void PlayAgainScene()
+{
+    glClearColor(1.0, 0.0, 0.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0, winw, winh, 0);
+	//instructions();
+	ButtonDraw(&BackButton);
+	glutSwapBuffers();
+	glFlush();
+}
 /****** Main Display Function ******/
 void display()
 {
 	if(select == 1)
 	{
-		scene1();
+        userChoice = 0; // Refreshing Inputs
+        cpuChoice = 0;  //
+		MenuScene();
 	}
 	if(select == 2)
 	{
-		scene2();
+		GameScene();
 	}
 	if(select == 3)
 	{
-		scene3();
+		InstructionScene();
 	}
+	if(select == 4)
+    {
+        PlayAgainScene();
+    }
 }
 
 /*******Mouse and Button Animations******/
