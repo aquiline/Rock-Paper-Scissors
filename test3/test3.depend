@@ -1,10 +1,13 @@
 # depslib dependency file v1.0
-1495096151 source:c:\users\dell\documents\practice\opengl-projects\test3\main.cpp
+1496260291 source:c:\users\dell\documents\practice\opengl-projects\test3\main.cpp
 	<stdlib.h>
 	<stdio.h>
 	<iostream>
 	<Windows.h>
 	<GL/glut.h>
+	<vector>
+	"lodepng.h"
+	<GL/glext.h>
 
 1341006776 c:\codeblocks\mingw\include\stdlib.h
 	<_mingw.h>
@@ -245,10 +248,23 @@
 	<_mingw.h>
 	<stddef.h>
 
-1495097080 source:c:\cg_proj\rock\main.cpp
-	<stdlib.h>
+1496216649 source:c:\users\dell\documents\practice\opengl-projects\test3\lodepng.cpp
+	"lodepng.h"
+	<limits.h>
 	<stdio.h>
+	<stdlib.h>
+
+1496216634 c:\users\dell\documents\practice\opengl-projects\test3\lodepng.h
+	<string.h>
+	<vector>
+	<string>
+	"lodepng.h"
 	<iostream>
-	<Windows.h>
-	<GL/glut.h>
+	"lodepng.h"
+
+1341006774 c:\codeblocks\mingw\include\limits.h
+	<_mingw.h>
+
+1301111164 c:\codeblocks\mingw\include\gl\glext.h
+	<windows.h>
 

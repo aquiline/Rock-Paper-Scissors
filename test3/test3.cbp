@@ -42,6 +42,8 @@
 			<Add library="gdi32" />
 			<Add directory="C:/CodeBlocks/MinGW/lib" />
 		</Linker>
+		<Unit filename="lodepng.cpp" />
+		<Unit filename="lodepng.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

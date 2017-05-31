@@ -9,6 +9,10 @@
 
 #include <GL/glut.h>
 
+#include <vector>
+#include "lodepng.h"
+#include <GL/glext.h>
+
 using namespace std;
 
 int select = 1; // Scene selection Variable. This is our GOD (^_^)
@@ -47,7 +51,6 @@ struct Button
 	ButtonCallback callbackFunction;	/* A pointer to a function to call if the button is pressed */
 };
 typedef struct Button Button; // Deal with this.
-
 
 /****** ThE fUnCtIoN wItHoUt WhIcH tExT wOnT't WoRk******/
 void Font(void *font, const unsigned char *text, int x, int y)
@@ -181,7 +184,162 @@ void MenuScene()
 	glFlush();
 }
 
+// Texture Initializations
 
+vector <unsigned char> rock_image;
+vector <unsigned char> paper_image;
+vector <unsigned char> scissor_image; // storage for image(pixel array)
+unsigned imageWidth;  // image width and height
+unsigned imageHeight;
+GLuint texname;
+
+
+void setTexture(vector<unsigned char> img, unsigned winw, unsigned winh)
+{
+    glGenTextures(1, &texname);
+    glBindTexture(GL_TEXTURE_2D, texname);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    // without this texture darkens
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, winw, winh,
+                0, GL_RGBA, GL_UNSIGNED_BYTE, &img[0]);
+}
+
+void loadImage(const char* name,int img_id)
+{
+    //use lodepng decode to decode image
+    int error;
+    if(img_id == 1)
+    {
+        if((error=lodepng::decode(rock_image,imageWidth,imageHeight,name)))
+        {
+            cout<<name<<":"<<lodepng_error_text(error)<<endl;
+            exit(1);
+        }
+    }
+
+    else if(img_id == 2)
+    {
+         if((error=lodepng::decode(paper_image,imageWidth,imageHeight,name)))
+        {
+            cout<<name<<":"<<lodepng_error_text(error)<<endl;
+            exit(1);
+        }
+    }
+    else if(img_id == 3)
+    {
+        if((error=lodepng::decode(scissor_image,imageWidth,imageHeight,name)))
+        {
+            cout<<name<<":"<<lodepng_error_text(error)<<endl;
+            exit(1);
+        }
+    }
+}
+float x0=200,y0=250,x1=500,y1=450;
+void RockScenePlayer()
+{
+    loadImage("rock.png",1);
+    glEnable(GL_TEXTURE_2D);
+    setTexture(rock_image,imageWidth,imageHeight);
+    glPushMatrix();
+    glBegin(GL_POLYGON);
+        glTexCoord2d(0,0);  glVertex2f(x0,y0);
+        glTexCoord2d(1,0);  glVertex2f(x1,y0);
+        glTexCoord2d(1,1);  glVertex2f(x1,y1);
+        glTexCoord2d(0,1);  glVertex2f(x0,y1);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glFlush();
+}
+void PaperScenePlayer()
+{
+    loadImage("paper.png",2);
+    glEnable(GL_TEXTURE_2D);
+    setTexture(paper_image,imageWidth,imageHeight);
+    glPushMatrix();
+    glBegin(GL_POLYGON);
+        glTexCoord2d(0,0);  glVertex2f(x0,y0);
+        glTexCoord2d(1,0);  glVertex2f(x1,y0);
+        glTexCoord2d(1,1);  glVertex2f(x1,y1);
+        glTexCoord2d(0,1);  glVertex2f(x0,y1);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glFlush();
+}
+void ScissorScenePlayer()
+{
+    loadImage("scissor.png",3);
+    glEnable(GL_TEXTURE_2D);
+    setTexture(scissor_image,imageWidth,imageHeight);
+    glPushMatrix();
+    glBegin(GL_POLYGON);
+        glTexCoord2d(0,0);  glVertex2f(x0,y0);
+        glTexCoord2d(1,0);  glVertex2f(x1,y0);
+        glTexCoord2d(1,1);  glVertex2f(x1,y1);
+        glTexCoord2d(0,1);  glVertex2f(x0,y1);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glFlush();
+}
+
+float xc0=700,yc0=250,xc1=1000,yc1=450;
+
+void RockSceneCpu()
+{
+    loadImage("rock.png",1);
+    glEnable(GL_TEXTURE_2D);
+    setTexture(rock_image,imageWidth,imageHeight);
+    glPushMatrix();
+    glBegin(GL_POLYGON);
+        glTexCoord2d(0,0);  glVertex2f(xc0,yc0);
+        glTexCoord2d(1,0);  glVertex2f(xc1,yc0);
+        glTexCoord2d(1,1);  glVertex2f(xc1,yc1);
+        glTexCoord2d(0,1);  glVertex2f(xc0,yc1);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glFlush();
+}
+void PaperSceneCpu()
+{
+    loadImage("paper.png",2);
+    glEnable(GL_TEXTURE_2D);
+    setTexture(paper_image,imageWidth,imageHeight);
+    glPushMatrix();
+    glBegin(GL_POLYGON);
+         glTexCoord2d(0,0);  glVertex2f(xc0,yc0);
+        glTexCoord2d(1,0);  glVertex2f(xc1,yc0);
+        glTexCoord2d(1,1);  glVertex2f(xc1,yc1);
+        glTexCoord2d(0,1);  glVertex2f(xc0,yc1);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glFlush();
+}
+void ScissorSceneCpu()
+{
+    loadImage("scissor.png",3);
+    glEnable(GL_TEXTURE_2D);
+    setTexture(scissor_image,imageWidth,imageHeight);
+    glPushMatrix();
+    glBegin(GL_POLYGON);
+        glTexCoord2d(0,0);  glVertex2f(xc0,yc0);
+        glTexCoord2d(1,0);  glVertex2f(xc1,yc0);
+        glTexCoord2d(1,1);  glVertex2f(xc1,yc1);
+        glTexCoord2d(0,1);  glVertex2f(xc0,yc1);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glFlush();
+}
 int userChoice = 0;
 int cpuChoice = 0;
 int same = 0; // This variable keeps the screen from Unwanted Redisplays
@@ -199,18 +357,21 @@ void cpuDisplay()
 {
 	if (cpuChoice == 1)
 	{
-		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Rock"), 900, 300);
-		cout << cpuChoice;
+		//Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Rock"), 900, 300);
+		//cout << cpuChoice;
+		RockSceneCpu();
 	}
 	else if (cpuChoice == 2)
 	{
-		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Paper"), 900, 300);
-		cout << cpuChoice;
+		//Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Paper"), 900, 300);
+		//cout << cpuChoice;
+		PaperSceneCpu();
 	}
 	else if (cpuChoice == 3)
 	{
-		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Scissor"), 900, 300);
-		cout << cpuChoice;
+		//Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Scissor"), 900, 300);
+		//cout << cpuChoice;
+		ScissorSceneCpu();
 	}
 }
 void computeWinner()
@@ -243,26 +404,28 @@ void gameplay()
     if (userChoice == 1)
     {
         //cpuChoice = rand() % 3 + 1;
-        Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Rock"), 200, 300);
+        //Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Rock"), 200, 300);
+        RockScenePlayer();
+        //Sleep(1000);
         cpuDisplay();
         computeWinner();
     }
     else if (userChoice == 2)
     {
         //cpuChoice = rand() % 3 + 1;
-        Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Paper"), 200, 300);
+        //Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Paper"), 200, 300);
+        PaperScenePlayer();
         cpuDisplay();
         computeWinner();
     }
     else if (userChoice == 3)
     {
         //cpuChoice = rand() % 3 + 1;
-        Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Scissor"), 200, 300);
+        //Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Scissor"), 200, 300);
+        ScissorScenePlayer();
         cpuDisplay();
         computeWinner();
     }
-
-
 }
 
 void GameScene()
@@ -306,18 +469,7 @@ void InstructionScene()
 	glutSwapBuffers();
 	glFlush();
 }
-void PlayAgainScene()
-{
-    glClearColor(1.0, 0.0, 0.0, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(0, winw, winh, 0);
-	//instructions();
-	ButtonDraw(&BackButton);
-	glutSwapBuffers();
-	glFlush();
-}
+
 /****** Main Display Function ******/
 void display()
 {
@@ -335,10 +487,6 @@ void display()
 	{
 		InstructionScene();
 	}
-	if(select == 4)
-    {
-        PlayAgainScene();
-    }
 }
 
 /*******Mouse and Button Animations******/
@@ -485,6 +633,10 @@ int main(int argc, char **argv)
 	glutInitWindowSize(winw, winh);
 	glutInitWindowPosition(0, 0);
 	glutCreateWindow("ROCK-PAPER-SCISSOR");
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+
 	glutReshapeFunc(Resize);
 
 	glutKeyboardFunc(kb);
