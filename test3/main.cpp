@@ -52,6 +52,108 @@ struct Button
 };
 typedef struct Button Button; // Deal with this.
 
+struct myImage{
+vector <unsigned char> image;
+unsigned imageWidth;  // image width and height
+unsigned imageHeight;
+
+};
+GLuint texname; // The texture Id.
+
+/*Each image is made an item with mtImage structure*/
+struct myImage menu;
+struct myImage prock;
+struct myImage ppaper;
+struct myImage pscissor;
+struct myImage crock;
+struct myImage cpaper;
+struct myImage cscissor;
+struct myImage ins;
+
+void setTexture(vector<unsigned char> img, unsigned winw, unsigned winh)
+{
+    glBindTexture(GL_TEXTURE_2D, texname);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, winw, winh,
+                0, GL_RGBA, GL_UNSIGNED_BYTE, &img[0]);
+}
+
+void loadImage(const char* name,int img_id)
+{
+    int error;
+    if(img_id == 0)
+    {
+        if((error=lodepng::decode(menu.image,menu.imageWidth,menu.imageHeight,name)))
+        {
+            cout<<name<<":"<<lodepng_error_text(error)<<endl;
+            exit(1);
+        }
+    }
+    else if(img_id == 1)
+    {
+        if((error=lodepng::decode(prock.image,prock.imageWidth,prock.imageHeight,name)))
+        {
+            cout<<name<<":"<<lodepng_error_text(error)<<endl;
+            exit(1);
+        }
+    }
+
+    else if(img_id == 2)
+    {
+         if((error=lodepng::decode(ppaper.image,ppaper.imageWidth,ppaper.imageHeight,name)))
+        {
+            cout<<name<<":"<<lodepng_error_text(error)<<endl;
+            exit(1);
+        }
+    }
+    else if(img_id == 3)
+    {
+        if((error=lodepng::decode(pscissor.image,pscissor.imageWidth,pscissor.imageHeight,name)))
+        {
+            cout<<name<<":"<<lodepng_error_text(error)<<endl;
+            exit(1);
+        }
+    }
+     else if(img_id == 4)
+    {
+        if((error=lodepng::decode(crock.image,crock.imageWidth,crock.imageHeight,name)))
+        {
+            cout<<name<<":"<<lodepng_error_text(error)<<endl;
+            exit(1);
+        }
+    }
+
+    else if(img_id == 5)
+    {
+         if((error=lodepng::decode(cpaper.image,cpaper.imageWidth,cpaper.imageHeight,name)))
+        {
+            cout<<name<<":"<<lodepng_error_text(error)<<endl;
+            exit(1);
+        }
+    }
+    else if(img_id == 6)
+    {
+        if((error=lodepng::decode(cscissor.image,cscissor.imageWidth,cscissor.imageHeight,name)))
+        {
+            cout<<name<<":"<<lodepng_error_text(error)<<endl;
+            exit(1);
+        }
+    }
+    else if(img_id == 7)
+    {
+        if((error=lodepng::decode(ins.image,ins.imageWidth,ins.imageHeight,name)))
+        {
+            cout<<name<<":"<<lodepng_error_text(error)<<endl;
+            exit(1);
+        }
+    }
+}
 /****** ThE fUnCtIoN wItHoUt WhIcH tExT wOnT't WoRk******/
 void Font(void *font, const unsigned char *text, int x, int y)
 {
@@ -86,10 +188,14 @@ void TheButtonCallback3()
 }
 
 /****** Declaring all the buttons in our game ******/
-Button StartButton = {(winw / 2) - 50,(winh / 2) - 12, 100,25, 0,0, reinterpret_cast<const unsigned char *>("START GAME"), TheButtonCallback };
-Button InsButton = {(winw / 2) -50,(winh / 2) + 24, 100,25, 0,0, reinterpret_cast<const unsigned char *>("INSTRUCTION"), TheButtonCallback1 };
-Button ExitButton = {(winw / 2) - 50,(winh / 2) + 60, 100,25, 0,0, reinterpret_cast<const unsigned char *>("EXIT"), TheButtonCallback2 };
-Button BackButton = { winw  - 650,winh  - 80, 100,25, 0,0, reinterpret_cast<const unsigned char *>("<-BACK"), TheButtonCallback3 };
+Button StartButton = {(winw / 2) - 50,(winh / 2) - 12+130, 100,25, 0,0,
+                    reinterpret_cast<const unsigned char *>("Start Game"), TheButtonCallback };
+Button InsButton = {(winw / 2) -50,(winh / 2) + 24+130, 100,25, 0,0,
+                    reinterpret_cast<const unsigned char *>("Instructions"), TheButtonCallback1 };
+Button ExitButton = {(winw / 2) - 50,(winh / 2) + 60+130, 100,25, 0,0,
+                    reinterpret_cast<const unsigned char *>("Exit"), TheButtonCallback2 };
+Button BackButton = { winw  - 650,winh  - 80, 100,25, 0,0,
+                    reinterpret_cast<const unsigned char *>("<-Back"), TheButtonCallback3 };
 
 /****** The following functions define all scenes in the game and its respective computations ******/
 
@@ -101,9 +207,13 @@ void ButtonDraw(Button *b) // Defined here because will be used in every scene.
 	if (b)
 	{
 		if (b->highlighted)
-			glColor3f(1.0f, 0.0f, 0.0f);
+			//glColor3f(1.0f, 0.0f, 0.0f);
+			//glColor3f(0.90, 0.32, 0.0);
+			glColor3f(1.00, 0.43, 0.00);
+
 		else
-			glColor3f(0.6f, 0.6f, 0.6f);
+			//glColor3f(0.6f, 0.6f, 0.6f);
+			glColor3f(0.56, 0.64, 0.68);
 
 		glBegin(GL_QUADS);
 		glVertex2i(b->x, b->y);
@@ -115,7 +225,8 @@ void ButtonDraw(Button *b) // Defined here because will be used in every scene.
 		glLineWidth(3);
 
 		if (b->state)
-			glColor3f(0.4f, 0.4f, 0.4f);
+			//glColor3f(0.4f, 0.4f, 0.4f);
+			glColor3f(0.47, 0.56, 0.61);
 		else
 			glColor3f(0.8f, 0.8f, 0.8f);
 
@@ -128,7 +239,8 @@ void ButtonDraw(Button *b) // Defined here because will be used in every scene.
 		if (b->state)
 			glColor3f(0.8f, 0.8f, 0.8f);
 		else
-			glColor3f(0.4f, 0.4f, 0.4f);
+            glColor3f(0.47, 0.56, 0.61);
+			//glColor3f(0.4f, 0.4f, 0.4f);
 
 		glBegin(GL_LINE_STRIP);
 		glVertex2i(b->x, b->y + b->h);
@@ -138,17 +250,13 @@ void ButtonDraw(Button *b) // Defined here because will be used in every scene.
 
 		glLineWidth(1);
 
-
-
 		fontx = b->x + (b->w - glutBitmapLength(GLUT_BITMAP_HELVETICA_10, b->label)) / 2;
 		fonty = b->y + (b->h + 10) / 2;
-
 
 		if (b->state) {
 			fontx += 2;
 			fonty += 2;
 		}
-
 
 		if (b->highlighted)
 		{
@@ -163,89 +271,50 @@ void ButtonDraw(Button *b) // Defined here because will be used in every scene.
 	}
 }
 
+void MenuBackground()
+{
+    glEnable(GL_TEXTURE_2D);
+    setTexture(menu.image,menu.imageWidth,menu.imageHeight);
+    glPushMatrix();
+    glBegin(GL_POLYGON);
+        glTexCoord2d(0,0);  glVertex2f(0,0);
+        glTexCoord2d(1,0);  glVertex2f(winw,0);
+        glTexCoord2d(1,1);  glVertex2f(winw,winh);
+        glTexCoord2d(0,1);  glVertex2f(0,winh);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glFlush();
+}
 void MenuScene()
 {
-	glClearColor(0.0,0.0,0.0,1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluOrtho2D(0, winw, winh, 0);
-
+    MenuBackground();
 	ButtonDraw(&StartButton);
 	ButtonDraw(&InsButton);
 	ButtonDraw(&ExitButton);
 
-	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("ROCK-----PAPER-----SCISSOR"), 450, 100);
-	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("PROJECT BY "), 900, 580);
-	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("RANJITH D"), 950, 600);
-	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("PRAVEEN KUMAR G"), 950, 620);
+	Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("ROCK-----PAPER-----SCISSOR"), 410, 100);
+
+    Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("RANJITH D"), 100, 570);
+    Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("USN : 1MV14CS084"), 100, 600);
+
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("PRAVEEN KUMAR G"), 900, 570);
+	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("USN : 1MV14CS074"), 900, 600);
 
 	glutSwapBuffers();
 	glFlush();
 }
 
-// Texture Initializations
+float x0=200,y0=250,x1=514,y1=485; ////Co-Ordinate position to draw player's choice.
 
-vector <unsigned char> rock_image;
-vector <unsigned char> paper_image;
-vector <unsigned char> scissor_image; // storage for image(pixel array)
-unsigned imageWidth;  // image width and height
-unsigned imageHeight;
-GLuint texname;
-
-
-void setTexture(vector<unsigned char> img, unsigned winw, unsigned winh)
-{
-    glGenTextures(1, &texname);
-    glBindTexture(GL_TEXTURE_2D, texname);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    // without this texture darkens
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, winw, winh,
-                0, GL_RGBA, GL_UNSIGNED_BYTE, &img[0]);
-}
-
-void loadImage(const char* name,int img_id)
-{
-    //use lodepng decode to decode image
-    int error;
-    if(img_id == 1)
-    {
-        if((error=lodepng::decode(rock_image,imageWidth,imageHeight,name)))
-        {
-            cout<<name<<":"<<lodepng_error_text(error)<<endl;
-            exit(1);
-        }
-    }
-
-    else if(img_id == 2)
-    {
-         if((error=lodepng::decode(paper_image,imageWidth,imageHeight,name)))
-        {
-            cout<<name<<":"<<lodepng_error_text(error)<<endl;
-            exit(1);
-        }
-    }
-    else if(img_id == 3)
-    {
-        if((error=lodepng::decode(scissor_image,imageWidth,imageHeight,name)))
-        {
-            cout<<name<<":"<<lodepng_error_text(error)<<endl;
-            exit(1);
-        }
-    }
-}
-float x0=200,y0=250,x1=500,y1=450;
 void RockScenePlayer()
 {
-    loadImage("rock.png",1);
     glEnable(GL_TEXTURE_2D);
-    setTexture(rock_image,imageWidth,imageHeight);
+    setTexture(prock.image,prock.imageWidth,prock.imageHeight);
     glPushMatrix();
     glBegin(GL_POLYGON);
         glTexCoord2d(0,0);  glVertex2f(x0,y0);
@@ -259,9 +328,8 @@ void RockScenePlayer()
 }
 void PaperScenePlayer()
 {
-    loadImage("paper.png",2);
     glEnable(GL_TEXTURE_2D);
-    setTexture(paper_image,imageWidth,imageHeight);
+    setTexture(ppaper.image,ppaper.imageWidth,ppaper.imageHeight);
     glPushMatrix();
     glBegin(GL_POLYGON);
         glTexCoord2d(0,0);  glVertex2f(x0,y0);
@@ -275,9 +343,8 @@ void PaperScenePlayer()
 }
 void ScissorScenePlayer()
 {
-    loadImage("scissor.png",3);
     glEnable(GL_TEXTURE_2D);
-    setTexture(scissor_image,imageWidth,imageHeight);
+    setTexture(pscissor.image,pscissor.imageWidth,pscissor.imageHeight);
     glPushMatrix();
     glBegin(GL_POLYGON);
         glTexCoord2d(0,0);  glVertex2f(x0,y0);
@@ -290,13 +357,12 @@ void ScissorScenePlayer()
     glFlush();
 }
 
-float xc0=700,yc0=250,xc1=1000,yc1=450;
+float xc0=700,yc0=250,xc1=1014,yc1=485; //Co-Ordinate position to draw cpu's choice.
 
 void RockSceneCpu()
 {
-    loadImage("rock.png",1);
     glEnable(GL_TEXTURE_2D);
-    setTexture(rock_image,imageWidth,imageHeight);
+    setTexture(crock.image,crock.imageWidth,crock.imageHeight);
     glPushMatrix();
     glBegin(GL_POLYGON);
         glTexCoord2d(0,0);  glVertex2f(xc0,yc0);
@@ -310,9 +376,8 @@ void RockSceneCpu()
 }
 void PaperSceneCpu()
 {
-    loadImage("paper.png",2);
     glEnable(GL_TEXTURE_2D);
-    setTexture(paper_image,imageWidth,imageHeight);
+    setTexture(cpaper.image,cpaper.imageWidth,cpaper.imageHeight);
     glPushMatrix();
     glBegin(GL_POLYGON);
          glTexCoord2d(0,0);  glVertex2f(xc0,yc0);
@@ -326,9 +391,8 @@ void PaperSceneCpu()
 }
 void ScissorSceneCpu()
 {
-    loadImage("scissor.png",3);
     glEnable(GL_TEXTURE_2D);
-    setTexture(scissor_image,imageWidth,imageHeight);
+    setTexture(cscissor.image,cscissor.imageWidth,cscissor.imageHeight);
     glPushMatrix();
     glBegin(GL_POLYGON);
         glTexCoord2d(0,0);  glVertex2f(xc0,yc0);
@@ -340,6 +404,7 @@ void ScissorSceneCpu()
     glPopMatrix();
     glFlush();
 }
+
 int userChoice = 0;
 int cpuChoice = 0;
 int same = 0; // This variable keeps the screen from Unwanted Redisplays
@@ -352,25 +417,26 @@ void kb(unsigned char key, int x, int y)
 	case 'c':  userChoice = 3;same = 0; glutPostRedisplay(); break;
 	}
 }
-
+void specialKb(int key, int x, int y)
+{
+	switch (key) {
+	case GLUT_KEY_LEFT  :  userChoice = 1;same = 0; glutPostRedisplay(); break;
+	case GLUT_KEY_DOWN  :  userChoice = 2;same = 0; glutPostRedisplay(); break;
+	case GLUT_KEY_RIGHT :  userChoice = 3;same = 0; glutPostRedisplay(); break;
+	}
+}
 void cpuDisplay()
 {
 	if (cpuChoice == 1)
 	{
-		//Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Rock"), 900, 300);
-		//cout << cpuChoice;
 		RockSceneCpu();
 	}
 	else if (cpuChoice == 2)
 	{
-		//Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Paper"), 900, 300);
-		//cout << cpuChoice;
 		PaperSceneCpu();
 	}
 	else if (cpuChoice == 3)
 	{
-		//Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Scissor"), 900, 300);
-		//cout << cpuChoice;
 		ScissorSceneCpu();
 	}
 }
@@ -378,50 +444,40 @@ void computeWinner()
 {
 	if ((cpuChoice == 1 && userChoice == 1) || (cpuChoice == 2 && userChoice == 2) || (cpuChoice == 3 && userChoice == 3))
 	{
-		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("TIED"), 570, 500);
-		cout << cpuChoice;
+		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Tied (-_-)"), 570, 500);
 	}
 	else if ((cpuChoice == 3 && userChoice == 1) || (cpuChoice == 1 && userChoice == 2) || (cpuChoice == 2 && userChoice == 3))
 	{
-		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Player Wins"), 550, 500);
-		cout << cpuChoice;
+		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("You Won !!"), 550, 500);
 	}
 	else if ((cpuChoice == 1 && userChoice == 3) || (cpuChoice == 2 && userChoice == 1) || (cpuChoice == 3 && userChoice == 2))
 	{
-		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("CPU Wins"), 560, 500);
-		cout << cpuChoice;
+		Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("You Lost :("), 560, 500);
 	}
 }
 void gameplay()
 {
 	Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Enter Your Choice"), 520, 100);
-	Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Player"), 200, 200);
-	Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("CPU"), 900, 200);
+	Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Player"), 300, 200);
+	Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("CPU"), 800, 200);
 
     if(!same)cpuChoice = rand() % 3 + 1; // New values only for Fresh Input.
 
     same = 1; // Display for one User Input case.
     if (userChoice == 1)
     {
-        //cpuChoice = rand() % 3 + 1;
-        //Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Rock"), 200, 300);
         RockScenePlayer();
-        //Sleep(1000);
         cpuDisplay();
         computeWinner();
     }
     else if (userChoice == 2)
     {
-        //cpuChoice = rand() % 3 + 1;
-        //Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Paper"), 200, 300);
         PaperScenePlayer();
         cpuDisplay();
         computeWinner();
     }
     else if (userChoice == 3)
     {
-        //cpuChoice = rand() % 3 + 1;
-        //Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("Scissor"), 200, 300);
         ScissorScenePlayer();
         cpuDisplay();
         computeWinner();
@@ -430,7 +486,7 @@ void gameplay()
 
 void GameScene()
 {
-	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClearColor(0.26, 0.65, 0.96, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -443,23 +499,23 @@ void GameScene()
 
 void instructions()
 {
-	Font(GLUT_BITMAP_TIMES_ROMAN_24, reinterpret_cast<const unsigned char *>("WELCOME"), 520, 100);
-	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("THERE ARE THREE ENTITIES IN THIS GAME"), 100, 300);
-	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("i.e 'ROCK', 'PAPER' AND 'SCISSOR' "), 100, 320);
-	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("THE RULES ARE"), 100, 340);
-	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("ROCK BEATS SCISSOR"), 200, 360);
-	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("PAPER BEATS ROCK"), 200, 380);
-	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("SCISSOR BEATS PAPER"), 200, 400);
-	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("THE PLAYER HAS TO CHOOSE BETWEEN ROCK,PAPER AND SCISSOR"), 100, 420);
-	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("PRESS Z FOR ROCK"), 200, 440);
-	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("PRESS X FOR PAPER"), 200, 460);
-	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("PRESS C FOR SCISSOR"), 200, 480);
-	Font(GLUT_BITMAP_HELVETICA_18, reinterpret_cast<const unsigned char *>("DEPENDING ON WHAT CPU CHOOSES THE RESULT WILL BE REVEALED"), 100, 500);
+    glEnable(GL_TEXTURE_2D);
+    setTexture(ins.image,ins.imageWidth,ins.imageHeight);
+    glPushMatrix();
+    glBegin(GL_POLYGON);
+        glTexCoord2d(0,0);  glVertex2f(0,0);
+        glTexCoord2d(1,0);  glVertex2f(winw,0);
+        glTexCoord2d(1,1);  glVertex2f(winw,winh);
+        glTexCoord2d(0,1);  glVertex2f(0,winh);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glFlush();
 
 }
 void InstructionScene()
 {
-	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClearColor(0.26, 0.65, 0.96, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -558,9 +614,10 @@ void ButtonPress(Button *b, int x, int y)
 
 void Resize(int w, int h)
 {
-	winw = w;
-	winh = h;
-	glViewport(0, 0, w, h);
+	//winw = w;
+	//winh = h;
+	//glViewport(0, 0, w, h);
+	glutReshapeWindow(winw,winh);
 }
 
 void MouseButton(int button, int state, int x, int y)
@@ -628,11 +685,23 @@ void MousePassiveMotion(int x, int y)
 
 int main(int argc, char **argv)
 {
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
 	glutInitWindowSize(winw, winh);
 	glutInitWindowPosition(0, 0);
 	glutCreateWindow("ROCK-PAPER-SCISSOR");
+
+    loadImage("main.png",0);
+    loadImage("prock.png",1);
+    loadImage("ppaper.png",2);
+    loadImage("pscissor.png",3);
+    loadImage("crock.png",4);
+    loadImage("cpaper.png",5);
+    loadImage("cscissor.png",6);
+    loadImage("ins.png",7);
+	glGenTextures(1, &texname);
+
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
@@ -640,12 +709,15 @@ int main(int argc, char **argv)
 	glutReshapeFunc(Resize);
 
 	glutKeyboardFunc(kb);
+	glutSpecialFunc(specialKb);
 
 	glutDisplayFunc(display);
 
 	glutMouseFunc(MouseButton);
 	glutMotionFunc(MouseMotion);
 	glutPassiveMotionFunc(MousePassiveMotion);
-
+//    cout<<GLUT_DOWN;
+//    cout<<GLUT_LEFT;
+//    cout<<GLUT_RIGHT;
 	glutMainLoop();
 }
