@@ -484,9 +484,9 @@ void kb(unsigned char key, int x, int y)
 void specialKb(int key, int x, int y)
 {
 	switch (key) {
-	case GLUT_KEY_LEFT  :  userChoice = 1;same = 0; glutPostRedisplay(); break;
-	case GLUT_KEY_DOWN  :  userChoice = 2;same = 0; glutPostRedisplay(); break;
-	case GLUT_KEY_RIGHT :  userChoice = 3;same = 0; glutPostRedisplay(); break;
+	case GLUT_KEY_LEFT  :  userChoice = 1;same = 0;pdx= 0;cdx = 0; glutPostRedisplay(); break;
+	case GLUT_KEY_DOWN  :  userChoice = 2;same = 0;pdx= 0;cdx = 0;  glutPostRedisplay(); break;
+	case GLUT_KEY_RIGHT :  userChoice = 3;same = 0;pdx= 0;cdx = 0;  glutPostRedisplay(); break;
 	}
 }
 void cpuDisplay()

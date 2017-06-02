@@ -260,3 +260,27 @@
 1301111164 c:\codeblocks\mingw\include\gl\glext.h
 	<windows.h>
 
+1496253577 source:c:\cg_proj\test5\lodepng.cpp
+	"lodepng.h"
+	<limits.h>
+	<stdio.h>
+	<stdlib.h>
+
+1496253559 c:\cg_proj\test5\lodepng.h
+	<string.h>
+	<vector>
+	<string>
+	"lodepng.h"
+	<iostream>
+	"lodepng.h"
+
+1496404255 source:c:\cg_proj\test5\main.cpp
+	<stdlib.h>
+	<stdio.h>
+	<iostream>
+	<Windows.h>
+	<GL/glut.h>
+	<vector>
+	"lodepng.h"
+	<GL/glext.h>
+
