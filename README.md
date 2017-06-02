@@ -1,6 +1,6 @@
 # Rock-Paper-Scissors
-Game of Rock-Paper-Scissors.
+The Game of Rock-Paper-Scissors.
 
-A C++ based application.
-Uses OpenGl.
+Uses C++ for the general GamePlay and Logic.
+Uses OpenGl for all graphics of the game.
 
