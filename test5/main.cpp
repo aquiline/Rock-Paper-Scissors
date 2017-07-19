@@ -840,7 +840,7 @@ int main(int argc, char **argv)
 	glutInitWindowPosition(0, 0);
 	glutCreateWindow("ROCK-PAPER-SCISSOR");
 
-    loadImage("main.png",0);
+    /*loadImage("main.png",0);
     loadImage("prock.png",1);
     loadImage("ppaper.png",2);
     loadImage("pscissor.png",3);
@@ -850,7 +850,19 @@ int main(int argc, char **argv)
     loadImage("ins.png",7);
     loadImage("win.png",8);
     loadImage("loss.png",9);
-    loadImage("tie.png",10);
+    loadImage("tie.png",10);*/
+    loadImage("res/main.png",0);
+    loadImage("res/prock.png",1);
+    loadImage("res/ppaper.png",2);
+    loadImage("res/pscissor.png",3);
+    loadImage("res/crock.png",4);
+    loadImage("res/cpaper.png",5);
+    loadImage("res/cscissor.png",6);
+    loadImage("res/ins.png",7);
+    loadImage("res/win.png",8);
+    loadImage("res/loss.png",9);
+    loadImage("res/tie.png",10);
+
 	glGenTextures(1, &texname);
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

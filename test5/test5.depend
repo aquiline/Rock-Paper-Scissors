@@ -274,3 +274,13 @@
 	<iostream>
 	"lodepng.h"
 
+1496740972 source:c:\cg_proj\test5\main.cpp
+	<stdlib.h>
+	<stdio.h>
+	<iostream>
+	<Windows.h>
+	<GL/glut.h>
+	<vector>
+	"lodepng.h"
+	<GL/glext.h>
+
