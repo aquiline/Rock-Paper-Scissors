@@ -6,7 +6,7 @@ To run the application follow the steps:
 
 	1. Clone the repository into your local machine(Windows).
 	2. Open the game folder.
-	3. Open the game.exe file to start the game. :+1:
+	3. Open the game.exe file to start the game. 
 
 ## Prerequisites
 1. Windows OS.
@@ -16,7 +16,7 @@ To run the application follow the steps:
 
 ## ScreenShots
 
-<img src="ScreenShots/Mainmenu.bmp">
+<img src="ScreenShots/MainMenu.bmp">
 
 <img src="ScreenShots/PlayExample1.bmp">
 
