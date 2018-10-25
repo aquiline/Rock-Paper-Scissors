@@ -16,13 +16,10 @@ To run the application follow the steps:
 
 ## ScreenShots
 
-<img src="ScreenShots/MainMenu.bmp">
-
-<img src="ScreenShots/PlayExample1.bmp">
-
-<img src="ScreenShots/PlayExample2.bmp">
-
-<img src="ScreenShots/Tie.bmp">
+![MainMenu](ScreenShots/MainMenu.bmp)
+![PlayExample1](ScreenShots/PlayExample1.bmp)
+![PlayExample2](ScreenShots/PlayExample2.bmp)
+![Tie](ScreenShots/Tie.bmp)
 
 ## Built With
 
